@@ -1,0 +1,82 @@
+{
+  "name": "gap-bridge",
+  "version": "2.0.0",
+  "description": "پل بین چت gapgpt.app و فایل‌ها، مرورگر و ترمینال سیستم شما",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "electron-rebuild -f -w node-pty || node -e \"console.log('[gap-bridge] electron-rebuild failed; terminal will use pipe mode')\"",
+    "dist": "electron-builder --publish never",
+    "dist:win": "electron-builder --win nsis portable --publish never",
+    "dist:linux": "electron-builder --linux AppImage deb --publish never",
+    "dist:all": "electron-builder --win --linux --publish never"
+  },
+  "dependencies": {
+    "ws": "^8.18.0",
+    "electron-updater": "^6.3.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.0",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "local.gap.bridge",
+    "productName": "Gap Bridge",
+    "files": [
+      "main.js",
+      "lib/**",
+      "preload.js",
+      "renderer/**",
+      "build/icon.png",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/node-pty/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "icon": "build/icon.png",
+    "artifactName": "${productName}-${version}-${os}.${ext}",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icon.png",
+      "category": "Utility",
+      "maintainer": "PortMort <noreply@example.com>"
+    },
+    "extraResources": [
+      {
+        "from": "extension",
+        "to": "extension"
+      }
+    ],
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://updates.invalid/gap-bridge"
+      }
+    ]
+  },
+  "author": "PortMort",
+  "license": "MIT",
+  "optionalDependencies": {
+    "node-pty": "^1.0.0"
+  }
+}

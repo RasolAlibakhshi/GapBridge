@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'self'">
+<title>Gap Bridge</title>
+<style>
+  :root { --bg:#070a14; --card:rgba(255,255,255,.045); --line:rgba(255,255,255,.09); --tx:#e8ecff; --mut:#8b93b8;
+          --a1:#6366f1; --a2:#06b6d4; --ok:#22d3a0; --bad:#f43f5e; --warn:#fbbf24; }
+  * { box-sizing:border-box; }
+  html,body { min-height:100%; }
+  body { margin:0; font-family:"Vazirmatn","Segoe UI",Tahoma,sans-serif; color:var(--tx); line-height:1.7;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(99,102,241,.28), transparent 60%),
+      radial-gradient(800px 500px at 0% 110%, rgba(6,182,212,.22), transparent 60%),
+      var(--bg);
+    background-attachment:fixed; }
+  body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.35;
+    background-image:radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px); background-size:26px 26px;
+    -webkit-mask-image:linear-gradient(#000, transparent 70%); mask-image:linear-gradient(#000, transparent 70%); }
+  .wrap { position:relative; max-width:1000px; margin:0 auto; padding:clamp(14px,3vw,28px); }
+  header { display:flex; align-items:center; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+  .logo { width:52px; height:52px; border-radius:16px; flex:none; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--a1),var(--a2)); box-shadow:0 0 28px rgba(99,102,241,.55); }
+  header h1 { margin:0; font-size:clamp(18px,3vw,24px); font-weight:700;
+    background:linear-gradient(90deg,#fff,#a5b4fc 50%,#67e8f9); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  header p { margin:0; color:var(--mut); font-size:12.5px; }
+  .pill { margin-inline-start:auto; display:flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px;
+    background:var(--card); border:1px solid var(--line); font-size:13px; backdrop-filter:blur(10px); }
+  .dot { width:10px; height:10px; border-radius:50%; background:var(--bad); box-shadow:0 0 10px var(--bad); flex:none; }
+  .dot.on { background:var(--ok); box-shadow:0 0 12px var(--ok); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(34,211,160,.6)} 70%{box-shadow:0 0 0 9px rgba(34,211,160,0)} 100%{box-shadow:0 0 0 0 rgba(34,211,160,0)} }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:16px; }
+  .full { grid-column:1/-1; }
+  section { position:relative; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px;
+    backdrop-filter:blur(14px); transition:border-color .25s, transform .25s; }
+  section:hover { border-color:rgba(129,140,248,.45); }
+  section::before { content:""; position:absolute; top:0; inset-inline:24px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--a2),var(--a1),transparent); opacity:.7; }
+  h2 { margin:0 0 12px; font-size:14.5px; font-weight:700; display:flex; align-items:center; gap:8px; color:#c7d2fe; }
+  h2 i { font-style:normal; width:26px; height:26px; border-radius:8px; display:grid; place-items:center; font-size:13px;
+    background:linear-gradient(135deg,rgba(99,102,241,.35),rgba(6,182,212,.3)); }
+  .hint { color:var(--mut); font-size:12.5px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  button { font-family:inherit; font-size:13px; color:#fff; border:0; border-radius:11px; padding:9px 16px; cursor:pointer;
+    background:linear-gradient(135deg,var(--a1),#4f8df5 55%,var(--a2)); box-shadow:0 4px 16px rgba(79,141,245,.28);
+    transition:transform .15s, box-shadow .15s, filter .15s; }
+  button:hover { transform:translateY(-1px); filter:brightness(1.1); box-shadow:0 6px 22px rgba(79,141,245,.45); }
+  button:active { transform:translateY(0); }
+  button.ghost { background:rgba(255,255,255,.07); border:1px solid var(--line); box-shadow:none; }
+  button.danger { background:linear-gradient(135deg,#e11d48,#f97316); box-shadow:0 4px 16px rgba(244,63,94,.3); }
+  button.x { padding:3px 11px; font-size:12px; background:rgba(244,63,94,.18); border:1px solid rgba(244,63,94,.4); box-shadow:none; color:#fecdd3; }
+  code { background:rgba(0,0,0,.4); border:1px solid var(--line); padding:2px 9px; border-radius:7px; font-family:Consolas,monospace; color:#67e8f9; }
+  ul { list-style:none; padding:0; margin:8px 0 12px; display:grid; gap:7px; }
+  li { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 12px; direction:ltr;
+    background:rgba(0,0,0,.28); border:1px solid var(--line); border-radius:11px; font-family:Consolas,monospace; font-size:12.5px; }
+  li span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+  .sw { display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none; }
+  .sw input { display:none; }  .sw .tr { width:46px; height:26px; border-radius:99px; background:rgba(255,255,255,.12); border:1px solid var(--line); position:relative; flex:none; transition:.25s; }
+  .sw .tr::after { content:""; position:absolute; top:3px; inset-inline-start:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:.25s; }
+  .sw input:checked + .tr { background:linear-gradient(135deg,var(--warn),#f97316); box-shadow:0 0 16px rgba(251,191,36,.45); }
+  .sw input:checked + .tr::after { inset-inline-start:23px; }
+  #automsg { margin:10px 0 12px; font-size:12.5px; }
+  #log { height:clamp(140px,26vh,260px); overflow:auto; background:#03050c; border:1px solid var(--line); padding:12px; border-radius:12px;
+    font:12px/1.7 Consolas,monospace; direction:ltr; white-space:pre-wrap; color:#7ee7c7; }
+  #log .r { padding:1px 0; border-bottom:1px solid rgba(255,255,255,.03); }
+  #log .r.warn { color:#fbbf24; } #log .r.error { color:#fb7185; }
+  #log .r .t { color:#5b6b8c; } #log .r .s { color:#8ea3d1; } #log .r .n { color:#fff; background:rgba(255,255,255,.12); border-radius:6px; padding:0 5px; margin-inline-start:6px; }
+  #log .r .k { display:block; color:#94a3b8; padding-inline-start:18px; font-size:11px; }
+  #log .empty { color:var(--mut); }
+  #lbadge { font-size:12px; font-weight:normal; margin-inline-start:8px; }
+  #lbadge .e { color:#fb7185; } #lbadge .w { color:#fbbf24; }
+  #lq { background:rgba(0,0,0,.35); color:var(--tx); border:1px solid var(--line); border-radius:9px; padding:5px 9px; font:12.5px Consolas,monospace; min-width:0; flex:1 1 160px; }
+  #log::-webkit-scrollbar { width:8px; } #log::-webkit-scrollbar-thumb { background:rgba(255,255,255,.15); border-radius:8px; }
+  #term { margin-top:12px; height:clamp(220px,40vh,420px); overflow:auto; background:#03050c; border:1px solid var(--line);
+    padding:10px 12px; border-radius:12px; font:12.5px/1.45 Consolas,"Courier New",monospace; direction:ltr; text-align:left;
+    white-space:pre-wrap; word-break:break-all; color:#d7e3ff; outline:none; }
+  #term:focus { border-color:rgba(129,140,248,.7); box-shadow:0 0 0 3px rgba(99,102,241,.18); }
+  #term .cu { background:#d7e3ff; color:#03050c; }
+  @media (max-width:560px) { .pill { margin-inline-start:0; width:100%; } button { flex:1 1 auto; } }
+  select { background:rgba(0,0,0,.35); color:var(--tx); border:1px solid var(--line); border-radius:9px; padding:5px 8px; font:12.5px Consolas,monospace; max-width:100%; min-width:0; flex:1 1 220px; }
+  select option { background:#0b0f1e; }
+  #uurl { background:rgba(0,0,0,.35); color:var(--tx); border:1px solid var(--line); border-radius:9px; padding:5px 9px; font:12.5px Consolas,monospace; min-width:0; }
+  #ob { position:fixed; inset:0; z-index:50; display:none; place-items:center; padding:16px; background:rgba(3,5,12,.78); backdrop-filter:blur(6px); }
+  #ob.on { display:grid; }
+  #ob .card { width:min(620px,100%); max-height:92vh; overflow:auto; background:#0b0f1e; border:1px solid rgba(129,140,248,.45); border-radius:18px; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+  #ob h2 { font-size:17px; }
+  #ob ol { list-style:none; padding:0; margin:12px 0; display:grid; gap:10px; counter-reset:s; }
+  #ob ol > li { display:block; direction:rtl; font-family:inherit; font-size:13px; padding:12px 14px; counter-increment:s; }
+  #ob ol > li b::before { content:counter(s) ". "; }
+  #ob ol > li .ck { float:left; font-size:13px; color:var(--mut); }
+  #ob ol > li.done { border-color:rgba(34,211,160,.5); }
+  #ob ol > li.done .ck { color:var(--ok); }
+  #ob ol > li .row { margin-top:8px; }
+  #ob .steps { margin:6px 0 0; padding-inline-start:18px; list-style:decimal; display:block; color:var(--mut); font-size:12.5px; }
+  #ob .steps li { display:list-item; background:none; border:0; padding:0; direction:rtl; font-family:inherit; }
+  #ob .foot { display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><svg width="30" height="30" viewBox="0 0 512 512" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"><path d="M70 340Q256 190 442 340"/><path d="M200 140L140 200L200 260"/><path d="M312 140L372 200L312 260"/></svg></div>
+    <div><h1>Gap Bridge</h1><p>پل هوشمند بین چت هوش مصنوعی و فایل‌های شما</p></div>
+    <div class="pill"><span class="dot" id="dot"></span><span id="st">افزونه‌ی کروم وصل نیست</span></div>
+    <button id="obopen" class="ghost" title="راهنمای شروع">؟ راهنما</button>
+  </header>
+
+  <div class="grid">
+    <section>
+      <h2><i>⚡</i>اتصال</h2>
+      <div class="row">پورت: <code id="port"></code></div>
+      <div class="row" style="margin-top:12px"><button id="tok">کپی توکن (برای افزونه)</button><button id="rot" class="ghost">توکن جدید</button></div>
+    </section>
+
+    <section>
+      <h2><i>🛡</i>حالت اجرای دستورات</h2>
+      <label class="sw"><input type="checkbox" id="auto"><span class="tr"></span><span>اجرای خودکار بدون پرسش</span></label>
+      <div id="automsg" class="hint"></div>
+      <div class="row"><button id="kill" class="danger">⛔ توقف فوری دستورها</button><button id="data" class="ghost">پشتیبان‌ها و گزارش</button></div>
+    </section>
+
+    <section>
+      <h2><i>📁</i>پوشه‌های مجاز</h2>
+      <ul id="roots"></ul>
+      <button id="add">+ افزودن پوشه…</button>
+    </section>
+
+    <section>
+      <h2><i>✨</i>دستورالعمل برای چت</h2>
+      <p class="hint" style="margin-top:0">این متن را یک‌بار در ابتدای هر گفتگو در gapgpt.app بفرست:</p>
+      <button id="ins">کپی دستورالعمل</button>
+    </section>
+
+    <section>
+      <h2><i>⌨</i>میان‌برها و ویندوز</h2>
+      <div class="row">کپی دستورالعمل: <input id="hk1" dir="ltr"></div>
+      <div class="row">بازنشانی اتصال: <input id="hk2" dir="ltr"></div>
+      <div class="row"><button id="hks">ذخیره میان‌برها</button></div>
+      <div class="row" id="winrow"><button id="shon" class="ghost">نصب «Send to Gap Bridge»</button><button id="shoff" class="ghost">حذف</button></div>
+      <div id="hkmsg" class="hint"></div>
+    </section>
+
+    <section>
+      <h2><i>⟳</i>به‌روزرسانی</h2>
+      <div class="row">نسخه: <code id="uver"></code></div>
+      <div class="row" style="margin-top:8px">سرور: <input id="uurl" dir="ltr" placeholder="https://example.com/gap-bridge" style="flex:1 1 220px"></div>
+      <label class="sw" style="margin-top:10px"><input type="checkbox" id="uauto"><span class="tr"></span><span>بررسی خودکار هنگام شروع (بدون دانلود)</span></label>
+      <div class="row" style="margin-top:10px"><button id="usave" class="ghost">ذخیره</button><button id="ucheck">بررسی به‌روزرسانی</button></div>
+      <div id="umsg" class="hint">پیش‌فرض خاموش است؛ بدون آدرس سرور هیچ ارتباطی برقرار نمی‌شود. پیش از دانلود و پیش از نصب پرسیده می‌شود.</div>
+    </section>
+
+    <section>
+      <h2><i>⏱</i>کارهای پس‌زمینه</h2>
+      <ul id="jobs"></ul>
+    </section>
+
+    <section class="full">
+      <h2><i>🌐</i>مرورگر Chromium (کنترل توسط دستیار)</h2>
+      <div class="row"><span class="dot" id="bdot"></span><span id="bst">در حال بررسی…</span></div>
+      <div class="row">مرورگر: <select id="bsel" dir="ltr"></select><button id="bpick" class="ghost">انتخاب دستی…</button></div>
+      <div class="row" style="flex-wrap:wrap;gap:18px">
+        <label class="sw"><input type="checkbox" id="bagent"><span class="tr"></span><span>دستیار در صورت نیاز مرورگر را اجرا کند (با تأیید)</span></label>
+        <label class="sw"><input type="checkbox" id="bauto"><span class="tr"></span><span>اجرا هنگام شروع برنامه</span></label>
+        <label class="sw"><input type="checkbox" id="bhead"><span class="tr"></span><span>بدون پنجره (headless)</span></label>
+      </div>
+      <div class="row"><button id="blaunch">▶ اجرای مرورگر</button><button id="bstop" class="danger">■ بستن</button><button id="breset" class="ghost">پاک کردن پروفایل</button></div>
+      <div id="bmsg" class="hint">مرورگر با پروفایل جدا اجرا می‌شود؛ رمزها و حساب‌های پروفایل اصلی شما در دسترس دستیار نیست. پورت دیباگ فقط روی 127.0.0.1 باز است.</div>
+    </section>
+
+    <section class="full">
+      <h2><i>&gt;_</i>ترمینال (دسترسی خط فرمان)</h2>
+      <div class="row"><span class="dot" id="tdot"></span><span id="tst" class="hint">بسته</span></div>
+      <div class="row" style="margin-top:10px">
+        <label class="sw"><input type="checkbox" id="tagent"><span class="tr"></span><span>دستیار بتواند در ترمینال دستور اجرا کند (با تأیید)</span></label>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="tstart">▶ شروع</button><button id="tint" class="ghost">⏸ Ctrl+C</button><button id="tstop" class="danger">■ بستن</button><button id="tclear" class="ghost">پاک کردن نمایش</button>
+      </div>
+      <div id="term" dir="ltr" tabindex="0" spellcheck="false"></div>
+      <div id="tmsg" class="hint">ترمینال روی پوشهٔ ریشه کار می‌کند و پوستهٔ سیستم را اجرا می‌کند؛ دستورها به حساب کاربری شما دسترسی دارند. برای UTF-8 در ویندوز پیش از اجرا دستور <code>chcp 65001</code> را بزنید. فارسی در این نمایش ممکن است جابه‌جا دیده شود.</div>
+    </section>
+
+    <section class="full">
+      <h2><i>🔐</i>دسترسی‌ها</h2>
+      <div id="permrows"></div>
+      <div class="hint">پیش‌فرض = از کلید کلی «اجرای خودکار» پیروی می‌کند. «رد» همیشه ابزار را می‌بندد.</div>
+    </section>
+
+    <section class="full">
+      <h2><i>↶</i>تاریخچهٔ تغییرات (Undo)</h2>
+      <ul id="hist"></ul>
+      <div id="hmsg" class="hint"></div>
+    </section>
+
+    <section class="full">
+      <h2><i>📜</i>گزارش ممیزی</h2>
+      <div class="row"><input id="aq" placeholder="جستجو…"><select id="ak"><option value="all">همه</option><option value="tool">ابزار</option><option value="approve">تأیید</option><option value="restore">بازگردانی</option><option value="perm">دسترسی</option></select><select id="ao"><option value="all">همه</option><option value="ok">موفق</option><option value="fail">ناموفق</option></select><button id="ago" class="ghost">نمایش</button></div>
+      <div id="alog" dir="ltr" style="max-height:220px;overflow:auto;font:12px monospace;white-space:pre-wrap"></div>
+    </section>
+
+    <section class="full">
+      <h2><i>›_</i>گزارش زنده و خطاها<span id="lbadge"></span></h2>
+      <div class="row">
+        <select id="llv"><option value="all">همهٔ سطح‌ها</option><option value="issues">فقط هشدار و خطا</option><option value="error">فقط خطا</option><option value="warn">فقط هشدار</option><option value="info">فقط اطلاعات</option></select>
+        <select id="lsrc"><option value="all">همهٔ منبع‌ها</option><option value="main">برنامه</option><option value="ui">رابط</option><option value="ext">افزونه</option><option value="tool">ابزارها</option></select>
+        <input id="lq" placeholder="جستجو در گزارش…">
+        <button id="lcp" class="ghost">کپی</button><button id="lclr" class="ghost">پاک کردن</button>
+      </div>
+      <div id="log" aria-live="polite"></div>
+      <div class="hint" id="lmsg">فقط در حافظه نگه داشته می‌شود (حداکثر ۱۰۰۰ ردیف). در کپی، توکن و مسیر پوشهٔ خانه پنهان می‌شوند، ولی پیش از ارسال، مسیر فایل‌ها و نام پروژه‌ها را خودت بررسی کن.</div>
+    </section>
+  </div>
+</div>
+<div id="ob" role="dialog" aria-modal="true" aria-labelledby="obt">
+  <div class="card">
+    <h2 id="obt"><i>👋</i>راهنمای شروع Gap Bridge</h2>
+    <p class="hint" style="margin:0">چهار قدم تا اتصال چت gapgpt.app به فایل‌های شما. هر وقت خواستید از دکمهٔ «؟ راهنما» بالای صفحه دوباره بازش کنید.</p>
+    <ol>
+      <li id="ob1"><span class="ck">○</span><b>یک پوشهٔ مجاز اضافه کنید</b>
+        <div class="hint">دستیار فقط داخل پوشه‌هایی که شما انتخاب می‌کنید فایل می‌خواند و می‌نویسد.</div>
+        <div class="row"><button id="obadd">+ افزودن پوشه…</button><span id="ob1m" class="hint"></span></div></li>
+      <li id="ob2"><span class="ck">○</span><b>افزونهٔ کروم را نصب کنید</b>
+        <ol class="steps">
+          <li>دکمهٔ زیر را بزنید؛ پوشهٔ افزونه باز و مسیرش کپی می‌شود.</li>
+          <li>در Chrome یا Edge آدرس <code dir="ltr">chrome://extensions</code> را باز کنید (در Edge: <code dir="ltr">edge://extensions</code>).</li>
+          <li>«Developer mode» را روشن کنید و «Load unpacked» را بزنید، سپس همان پوشه را انتخاب کنید (مسیر را می‌توانید paste کنید).</li>
+        </ol>
+        <div class="row"><button id="obext">باز کردن پوشهٔ افزونه</button><span id="ob2m" class="hint" dir="auto"></span></div></li>
+      <li id="ob3"><span class="ck">○</span><b>توکن را در افزونه وارد کنید</b>
+        <div class="hint">توکن را کپی کنید، روی آیکون افزونه بزنید، در کادر توکن paste کنید و «ذخیره» را بزنید.</div>
+        <div class="row"><button id="obtok">کپی توکن</button><span id="ob3m" class="hint"></span></div></li>
+      <li id="ob4"><span class="ck">○</span><b>اتصال را بررسی کنید</b>
+        <div class="hint">gapgpt.app را باز کنید (یا صفحه را تازه کنید). وقتی افزونه وصل شود، این قدم خودکار تیک می‌خورد.</div>
+        <div class="row"><span class="dot" id="obdot"></span><span id="ob4m" class="hint">منتظر اتصال…</span></div></li>
+    </ol>
+    <div class="foot"><button id="oblater" class="ghost">بعداً</button><button id="obdone">تمام شد</button></div>
+  </div>
+</div>
+<script src="renderer.js"></script>
+</body>
+</html>

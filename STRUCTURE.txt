@@ -1,0 +1,32 @@
+gap-bridge/
+├── build/
+│   ├── icon.ico
+│   └── icon.png
+├── extension/                 افزونهٔ کروم (Load unpacked)
+│   ├── icons/ (16, 32, 48, 128).png
+│   ├── background.js
+│   ├── content.js
+│   ├── manifest.json
+│   ├── popup.html
+│   └── popup.js
+├── lib/
+│   ├── audit.js               گزارش ممیزی (JSON Lines)
+│   ├── browser.js             اجرای Chrome/Edge با پروفایل جدا (پورت 9222)
+│   ├── diff.js                نمایش خط‌به‌خط تغییرات برای پنجرهٔ تأیید
+│   ├── history.js             پشتیبان‌ها و بازگردانی (Undo)
+│   ├── jobs.js                کارهای پس‌زمینه
+│   ├── logbuf.js              بافر لاگ در حافظه برای کنسول خطاها (۱۰۰۰ مورد، بدون نوشتن روی دیسک)
+│   ├── perms.js               دسترسی جدا برای هر دسته از ابزارها
+│   ├── rag.js                 نمایه و جست‌وجوی محلی
+│   ├── terminal.js            ترمینال (PTY در صورت وجود node-pty، وگرنه Pipe)
+│   ├── tokens.js              شمارش توکن
+│   └── updater.js             به‌روزرسانی اختیاری (electron-updater، پیش‌فرض خاموش)
+├── renderer/
+│   ├── index.html             رابط برنامه (راهنمای شروع، ترمینال، کارها، کنسول خطاها، به‌روزرسانی)
+│   └── renderer.js
+├── .gitignore
+├── main.js                    فرایند اصلی Electron، سرور WS و ابزارها
+├── package.json
+├── preload.js
+├── README.md
+└── STRUCTURE.txt

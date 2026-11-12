@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<style>
+  body{font-family:Tahoma,sans-serif;width:280px;padding:12px;font-size:13px}
+  input[type=text]{width:100%;box-sizing:border-box;direction:ltr;margin:6px 0}
+  button{margin-top:6px;padding:5px 12px}
+  details{margin-top:10px;border-top:1px solid #ddd;padding-top:6px}
+  summary{cursor:pointer;font-weight:bold}
+  details input[type=text],details input[type=number]{width:100%;box-sizing:border-box;direction:ltr;margin:3px 0 6px;font-family:monospace;font-size:12px}
+  .hint{color:#666;font-size:11px}
+</style></head>
+<body>
+  <b>Gap Bridge</b><br>
+  <button id="power" style="width:100%;font-size:14px;padding:8px"></button><br>
+  توکن را از برنامه کپی و اینجا بچسبان:
+  <input type="text" id="token" placeholder="token">
+  <label><input type="checkbox" id="auto" checked> ارسال خودکار نتیجه در چت</label><br>
+  <details id="adv">
+    <summary>تنظیمات پیشرفته (انتخابگرها و تقسیم خروجی)</summary>
+    <div class="hint">اگر سایت gapgpt تغییر کرد و افزونه کادر پیام یا دکمهٔ ارسال را پیدا نکرد، CSS selector تازه را اینجا بنویس. خالی = پیش‌فرض.</div>
+    کادر ورودی پیام:
+    <input type="text" id="selInput">
+    دکمهٔ ارسال:
+    <input type="text" id="selSend">
+    دکمهٔ پیوست فایل (اختیاری):
+    <input type="text" id="selAttach">
+    <button id="test">آزمایش روی تب فعلی</button>
+    <button id="reset">بازگشت به پیش‌فرض</button>
+    <div id="tmsg" class="hint"></div>
+    حداکثر طول هر پیام (نویسه؛ 0 = تقسیم نشود):
+    <input type="number" id="chunk" min="0" step="1000">
+    <div class="hint">خروجی‌های بلندتر چند پیام پشت هم فرستاده می‌شوند (کمینه 2000).</div>
+  </details>
+  <button id="save">ذخیره</button>
+  <div id="msg"></div>
+  <script src="popup.js"></script>
+</body></html>
